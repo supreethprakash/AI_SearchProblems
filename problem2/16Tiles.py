@@ -8,7 +8,8 @@ import sys
 
 
 def getFileName():
-    return sys.argv[1]
+    return 'tile.txt'
+    #return sys.argv[1]
 
 
 def readContents(fn):
@@ -31,45 +32,95 @@ def getGoalState(size):
 def findZero(board):
     return [[i, j] for i, sublists in enumerate(board) for j, value in enumerate(sublists) if value == 0]
 
-def createNewBoards(board, zeroPos):
+def createNewBoards(zeroPos):
     zerothRow = zeroPos[0][0]
     zerothCol = zeroPos[0][1]
     newBoard = []
     swapPos = []
-    for i in range(0, 2):
-        newBoard.append(board)
-        print newBoard
+    print(getOriginalBoard())
+    for i in range(0, 8):
+        newBoard.append(getOriginalBoard())
         if zerothCol != 0 and 'L' not in swapPos:
             newBoard[i][zerothRow][zerothCol - 1], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
                                                                                            zerothCol], \
                                                                                        newBoard[i][zerothRow][
                                                                                            zerothCol - 1]
             swapPos.append('L')
+            print 'L', newBoard[i]
+
         elif zerothRow != 0 and 'U' not in swapPos:
             newBoard[i][zerothRow - 1][zerothCol], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
                                                                                            zerothCol], \
                                                                                        newBoard[i][zerothRow - 1][
                                                                                            zerothCol]
             swapPos.append('U')
+            print 'U', newBoard[i]
+
+
         elif zerothRow != 3 and 'D' not in swapPos:
             newBoard[i][zerothRow + 1][zerothCol], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
                                                                                            zerothCol], \
                                                                                        newBoard[i][zerothRow + 1][
                                                                                            zerothCol]
             swapPos.append('D')
+            print 'D', newBoard[i]
+
+
+        elif zerothCol != 3 and 'R' not in swapPos:
+            newBoard[i][zerothRow][zerothCol + 1], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
+                                                                                           zerothCol], \
+                                                                                       newBoard[i][zerothRow][
+                                                                                           zerothCol + 1]
+            swapPos.append('R')
+            print 'R', newBoard[i]
+
+
+        elif zerothRow == 3 and 'DT' not in swapPos:
+            newBoard[i][zerothRow - 3][zerothCol], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
+                                                                                           zerothCol], \
+                                                                                       newBoard[i][zerothRow - 3][
+                                                                                           zerothCol]
+            swapPos.append('DT')
+            print 'DT', newBoard[i]
+
+        elif zerothRow == 0 and 'TD' not in swapPos:
+            newBoard[i][zerothRow + 3][zerothCol], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
+                                                                                           zerothCol], \
+                                                                                       newBoard[i][zerothRow + 3][
+                                                                                           zerothCol]
+            swapPos.append('TD')
+            print 'TD', newBoard[i]
+
+        elif zerothCol == 0 and 'RL' not in swapPos:
+            newBoard[i][zerothRow][zerothCol + 3], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
+                                                                                           zerothCol], \
+                                                                                       newBoard[i][zerothRow][
+                                                                                           zerothCol + 3]
+            swapPos.append('RL')
+            print 'RL', newBoard[i]
+
+        elif zerothCol == 3 and 'LR' not in swapPos:
+            newBoard[i][zerothRow][zerothCol - 3], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
+                                                                                           zerothCol], \
+                                                                                       newBoard[i][zerothRow][
+                                                                                           zerothCol - 3]
+            swapPos.append('LR')
+            print 'LR', newBoard[i]
+
+
+def getOriginalBoard():
+    contents = readContents(getFileName())
+    return [contents[0][i:i + 4] for i in range(0, len(contents[0]), 4)]
 
 
 def swapTiles(board):
     zerothPos = findZero(board)
-    createNewBoards(board[:], zerothPos)
+    createNewBoards(zerothPos)
 
 
 #Main Function
 if __name__ == '__main__':
     print 'Read the file from command terminal\n'
-    #fileName = getFileName()
-    fileName = 'tile.txt'
-    contents = readContents(fileName)
-    misplacedTiles = [contents[0][i:i+4] for i in range(0, len(contents[0]), 4)]
+    misplacedTiles = getOriginalBoard()
     swapTiles(misplacedTiles)
     #print getGoalState(contents[1])
