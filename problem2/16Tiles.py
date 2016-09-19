@@ -5,6 +5,7 @@ Input: Text file to read the randomized input
 Output: Solved Puzzle and the number of steps that it took
 '''
 import sys
+from copy import deepcopy
 
 
 def getFileName():
@@ -32,14 +33,15 @@ def getGoalState(size):
 def findZero(board):
     return [[i, j] for i, sublists in enumerate(board) for j, value in enumerate(sublists) if value == 0]
 
-def createNewBoards(zeroPos):
+
+def createNewBoards(fringeList, zeroPos):
     zerothRow = zeroPos[0][0]
     zerothCol = zeroPos[0][1]
     newBoard = []
     swapPos = []
-    print(getOriginalBoard())
     for i in range(0, 8):
-        newBoard.append(getOriginalBoard())
+        addFringe = deepcopy(fringeList)
+        newBoard.append(addFringe)
         if zerothCol != 0 and 'L' not in swapPos:
             newBoard[i][zerothRow][zerothCol - 1], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
                                                                                            zerothCol], \
@@ -106,21 +108,43 @@ def createNewBoards(zeroPos):
                                                                                            zerothCol - 3]
             swapPos.append('LR')
             print 'LR', newBoard[i]
+    return newBoard
 
 
 def getOriginalBoard():
     contents = readContents(getFileName())
     return [contents[0][i:i + 4] for i in range(0, len(contents[0]), 4)]
+'''
+def solve(initial_board):
+    fringe = [initial_board]
+    while len(fringe) > 0:
+        for s in successors(fringe.pop()):
+            if is_goal(s):
+                return (s)
+            fringe.append(s)
+    return False
+'''
+
+def isGoal(lst):
+    goalState = getGoalState(16)
+    if len([x for x in goalState if x not in lst] + [x for x in lst if x not in goalState]) == 0:
+        return True
+    else:
+        return False
 
 
 def swapTiles(board):
+    fringe = [board]
     zerothPos = findZero(board)
-    createNewBoards(zerothPos)
+    while(len(fringe) > 0):
+        for s in createNewBoards(fringe.pop(), zerothPos):
+            if isGoal(s):
+                return s
+    return False
 
 
 #Main Function
 if __name__ == '__main__':
     print 'Read the file from command terminal\n'
     misplacedTiles = getOriginalBoard()
-    swapTiles(misplacedTiles)
-    #print getGoalState(contents[1])
+    print(swapTiles(misplacedTiles))
