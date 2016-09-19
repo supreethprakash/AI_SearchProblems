@@ -48,7 +48,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow][
                                                                                            zerothCol - 1]
             swapPos.append('L')
-            print 'L', newBoard[i]
+            #print 'L', newBoard[i]
 
         elif zerothRow != 0 and 'U' not in swapPos:
             newBoard[i][zerothRow - 1][zerothCol], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
@@ -56,7 +56,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow - 1][
                                                                                            zerothCol]
             swapPos.append('U')
-            print 'U', newBoard[i]
+            #print 'U', newBoard[i]
 
 
         elif zerothRow != 3 and 'D' not in swapPos:
@@ -65,7 +65,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow + 1][
                                                                                            zerothCol]
             swapPos.append('D')
-            print 'D', newBoard[i]
+            #print 'D', newBoard[i]
 
 
         elif zerothCol != 3 and 'R' not in swapPos:
@@ -74,7 +74,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow][
                                                                                            zerothCol + 1]
             swapPos.append('R')
-            print 'R', newBoard[i]
+            #print 'R', newBoard[i]
 
 
         elif zerothRow == 3 and 'DT' not in swapPos:
@@ -83,7 +83,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow - 3][
                                                                                            zerothCol]
             swapPos.append('DT')
-            print 'DT', newBoard[i]
+            #print 'DT', newBoard[i]
 
         elif zerothRow == 0 and 'TD' not in swapPos:
             newBoard[i][zerothRow + 3][zerothCol], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
@@ -91,7 +91,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow + 3][
                                                                                            zerothCol]
             swapPos.append('TD')
-            print 'TD', newBoard[i]
+            #print 'TD', newBoard[i]
 
         elif zerothCol == 0 and 'RL' not in swapPos:
             newBoard[i][zerothRow][zerothCol + 3], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
@@ -99,7 +99,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow][
                                                                                            zerothCol + 3]
             swapPos.append('RL')
-            print 'RL', newBoard[i]
+            #print 'RL', newBoard[i]
 
         elif zerothCol == 3 and 'LR' not in swapPos:
             newBoard[i][zerothRow][zerothCol - 3], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
@@ -107,23 +107,14 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow][
                                                                                            zerothCol - 3]
             swapPos.append('LR')
-            print 'LR', newBoard[i]
+            #print 'LR', newBoard[i]
     return newBoard
 
 
 def getOriginalBoard():
     contents = readContents(getFileName())
     return [contents[0][i:i + 4] for i in range(0, len(contents[0]), 4)]
-'''
-def solve(initial_board):
-    fringe = [initial_board]
-    while len(fringe) > 0:
-        for s in successors(fringe.pop()):
-            if is_goal(s):
-                return (s)
-            fringe.append(s)
-    return False
-'''
+
 
 def isGoal(lst):
     goalState = getGoalState(16)
@@ -132,14 +123,35 @@ def isGoal(lst):
     else:
         return False
 
+def heuristicCost(lst):
+    totalSum = 0
+    for r in range(4):
+        for c in range(4):
+            n = lst[r][c] - 1
+            if (n == -1):
+                n = 15
+            r_solved = n / 4
+            c_solved = n % 4
+            totalSum += abs(r - r_solved)
+            totalSum += abs(c - c_solved)
+    return totalSum
+
 
 def swapTiles(board):
     fringe = [board]
     zerothPos = findZero(board)
+    minimum = 9999
+    bestOptions = []
     while(len(fringe) > 0):
         for s in createNewBoards(fringe.pop(), zerothPos):
             if isGoal(s):
                 return s
+            if s not in fringe:
+                heurCost = heuristicCost(s)
+                if heurCost < minimum:
+                    minimum = heurCost
+                    bestOptions = s
+            fringe.append(bestOptions)
     return False
 
 
