@@ -6,6 +6,7 @@ Output: Solved Puzzle and the number of steps that it took
 '''
 import sys
 from copy import deepcopy
+import heapq
 
 
 def getFileName():
@@ -38,16 +39,15 @@ def createNewBoards(fringeList, zeroPos):
     zerothRow = zeroPos[0][0]
     zerothCol = zeroPos[0][1]
     newBoard = []
+    returnBoard = []
     swapPos = []
     for i in range(0, 8):
         addFringe = deepcopy(fringeList)
         newBoard.append(addFringe)
         if zerothCol != 0 and 'L' not in swapPos:
-            newBoard[i][zerothRow][zerothCol - 1], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
-                                                                                           zerothCol], \
-                                                                                       newBoard[i][zerothRow][
-                                                                                           zerothCol - 1]
+            newBoard[i][zerothRow][zerothCol - 1], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][zerothCol], newBoard[i][zerothRow][zerothCol - 1]
             swapPos.append('L')
+            returnBoard.append((newBoard[i], 'L'))
             #print 'L', newBoard[i]
 
         elif zerothRow != 0 and 'U' not in swapPos:
@@ -56,6 +56,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow - 1][
                                                                                            zerothCol]
             swapPos.append('U')
+            returnBoard.append((newBoard[i], 'U'))
             #print 'U', newBoard[i]
 
 
@@ -65,6 +66,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow + 1][
                                                                                            zerothCol]
             swapPos.append('D')
+            returnBoard.append((newBoard[i], 'D'))
             #print 'D', newBoard[i]
 
 
@@ -74,6 +76,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow][
                                                                                            zerothCol + 1]
             swapPos.append('R')
+            returnBoard.append((newBoard[i], 'R'))
             #print 'R', newBoard[i]
 
 
@@ -83,6 +86,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow - 3][
                                                                                            zerothCol]
             swapPos.append('DT')
+            returnBoard.append((newBoard[i], 'U'))
             #print 'DT', newBoard[i]
 
         elif zerothRow == 0 and 'TD' not in swapPos:
@@ -91,6 +95,7 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow + 3][
                                                                                            zerothCol]
             swapPos.append('TD')
+            returnBoard.append((newBoard[i], 'D'))
             #print 'TD', newBoard[i]
 
         elif zerothCol == 0 and 'RL' not in swapPos:
@@ -99,16 +104,19 @@ def createNewBoards(fringeList, zeroPos):
                                                                                        newBoard[i][zerothRow][
                                                                                            zerothCol + 3]
             swapPos.append('RL')
+            returnBoard.append((newBoard[i], 'L'))
             #print 'RL', newBoard[i]
 
-        elif zerothCol == 3 and 'LR' not in swapPos:
+        #elif zerothCol == 3 and 'LR' not in swapPos:
             newBoard[i][zerothRow][zerothCol - 3], newBoard[i][zerothRow][zerothCol] = newBoard[i][zerothRow][
                                                                                            zerothCol], \
                                                                                        newBoard[i][zerothRow][
                                                                                            zerothCol - 3]
             swapPos.append('LR')
+            returnBoard.append((newBoard[i], 'R'))
             #print 'LR', newBoard[i]
-    return newBoard
+
+    return returnBoard
 
 
 def getOriginalBoard():
@@ -123,40 +131,87 @@ def isGoal(lst):
     else:
         return False
 
-def heuristicCost(lst):
+
+def heuristicCost(start):
     totalSum = 0
+    circularSum = 0
+    cost = 0
+    s = 0
+
     for r in range(4):
         for c in range(4):
-            n = lst[r][c] - 1
-            if (n == -1):
-                n = 15
-            r_solved = n / 4
-            c_solved = n % 4
-            totalSum += abs(r - r_solved)
-            totalSum += abs(c - c_solved)
-    return totalSum
+            n = start[r][c] - 1
+            if n != -1:
+                r_solved = abs(r - n / 4)
+                c_solved = abs(c - n % 4)
+                totalSum += r_solved + c_solved
+                s = r_solved + c_solved
+                if s == 6:
+                    circularSum += s / 3
+                else:
+                    circularSum += (s % 3) + 1
+
+            else:
+                r_solved = abs(r - 15 / 4)
+                c_solved = abs(c - 15 % 4)
+                totalSum += r_solved + c_solved
+                s = r_solved + c_solved
+                if s == 6:
+                    circularSum += s / 3
+                else:
+                    circularSum += (s % 3) + 1
+
+    cost = min(totalSum, circularSum)
+    return cost
 
 
 def swapTiles(board):
-    fringe = [board]
+    fringe = []
+    heurCost = heuristicCost(board)
+    minimum = heurCost
+    heapq.heappush(fringe, (heurCost, board))
+    solution = [ ]
+    direction = [ ]
+    dir = [ ]
+    solution.append(board)
     zerothPos = findZero(board)
-    minimum = 9999
-    bestOptions = []
-    while(len(fringe) > 0):
-        for s in createNewBoards(fringe.pop(), zerothPos):
-            if isGoal(s):
-                return s
-            if s not in fringe:
-                heurCost = heuristicCost(s)
-                if heurCost < minimum:
-                    minimum = heurCost
-                    bestOptions = s
-            fringe.append(bestOptions)
-    return False
+    while( len(fringe) > 0 ):
+        for s in createNewBoards(heapq.heappop(fringe)[1], zerothPos):
+            if isGoal(s[0]):
+                solution.append(s[0])
+                direction.append(s[1])
+
+                return solution, direction
+
+            if s[0] not in fringe:
+                min = heuristicCost(board)
+                if min <= minimum:
+                    bestSolution, dir = s[0], s[1]
+                    minimum = min
+                    if (minimum, bestSolution) not in fringe:
+                        heapq.heappush(fringe, (minimum, bestSolution))
+        solution.append(bestSolution)
+        if len(dir) > 0:
+            direction.append(dir)
+        return 0, 0
 
 
 #Main Function
 if __name__ == '__main__':
     print 'Read the file from command terminal\n'
     misplacedTiles = getOriginalBoard()
-    print(swapTiles(misplacedTiles))
+    sol, dir = swapTiles(misplacedTiles)
+
+    if sol == 0:
+        print "Unsolvable"
+    else:
+        print "Solution:"
+        for i in sol:
+            for j in i:
+                for k in j:
+                    print k,
+                print
+            print " "
+
+        for i in dir:
+            print i,
