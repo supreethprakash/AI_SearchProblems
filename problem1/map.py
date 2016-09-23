@@ -94,5 +94,5 @@ sourceConnections = createDict(fileName)
 starting = "Bloomington,_Indiana"
 destination = "Indianapolis,_Indiana"
 print(dfs(graph, starting, destination))
-BFS(graph, starting, destination)
+#BFS(graph, starting, destination)
 #print(find_path(graph, starting,[]))
