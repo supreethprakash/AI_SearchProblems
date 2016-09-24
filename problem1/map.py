@@ -76,27 +76,17 @@ def dfs(graph, start, destination, path=[]):
         if destination in path:
             return path
 
-#This won't work
-def BFS(graph, start, end):
+
+def bfs(graph, start, destination, path=[]):
     start = (start, 0)
-    temp_path = [start]
-    queue = []
-    queue.append(temp_path)
-
-    while len(queue) > 0:
-        tmp_path = queue.pop(0)
-        temp_path = tmp_path[0]
-        last_node = temp_path[len(temp_path) - 1]
-        #print 'temp path', tmp_path
-        if last_node == end:
-            print "VALID_PATH : ", temp_path
-        for link_node in graph[last_node]:
-            if link_node not in temp_path:
-                new_path = []
-                new_path = temp_path + [link_node]
-                queue.append(new_path)
-
-    print queue
+    stack = [start]
+    while stack:
+        v = stack.pop(0)
+        if not v[0] in path:
+            path = path + [v[0]]
+            stack = stack + graph[v[0]]
+        if destination in path:
+            return path
 
 
 fileName = "road-segments.txt"
@@ -105,5 +95,6 @@ sourceConnections = createDict(fileName)
 starting = "Bloomington,_Indiana"
 destination = "Indianapolis,_Indiana"
 print(dfs(graph, starting, destination))
+print(bfs(graph, starting, destination))
 #BFS(graph, starting, destination)
 #print(find_path(graph, starting,[]))
