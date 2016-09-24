@@ -25,19 +25,29 @@ def createGraph(fileName):
     temp = [line.split(' ', ) for line in [line.rstrip('\n') for line in f]]
     for i in temp:
         tup = tuple()
-        str = ''
         if i[0] not in graph:
             graph[i[0]] = []
-        for j in i[1:3]:
-            tup = tup + (j,)
+        for j in i[1:5]:
+            if not j:
+                j = '25'
+            if j.isdigit():
+                tup = tup + (int(j),)
+            else:
+                tup = tup + (j,)
         graph[i[0]].append(tup)
 
         if i[1] not in graph:
             graph[i[1]] = []
         else:
-            graph[i[1]].append((i[0], i[2]))
+            if i[3] == '':
+                i[3] = '0'
+            graph[i[1]].append((i[0], int(i[2]), int(i[3]), i[4]))
+
+    #for key, val in graph.iteritems():
+        #print key, ':', val
 
     return graph
+
 
 #sample path from Src A - Dst B
 def find_path(graph, start, end, path=[]):
@@ -52,8 +62,10 @@ def find_path(graph, start, end, path=[]):
             if newpath: return newpath
     return None
 
+
 #Finds the first found route between src and dest, need to tweak it a bit
 def dfs(graph, start, destination, path=[]):
+    allPaths = []
     start = (start, 0)
     stack = [start]
     while stack:
@@ -85,7 +97,6 @@ def BFS(graph, start, end):
                 queue.append(new_path)
 
     print queue
-
 
 
 fileName = "road-segments.txt"
