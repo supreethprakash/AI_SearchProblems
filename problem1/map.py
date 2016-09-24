@@ -38,13 +38,12 @@ def createGraph(fileName):
 
         if i[1] not in graph:
             graph[i[1]] = []
-        else:
-            if i[3] == '':
-                i[3] = '0'
-            graph[i[1]].append((i[0], int(i[2]), int(i[3]), i[4]))
+        if i[3] == '':
+            i[3] = '0'
+        graph[i[1]].append((i[0], int(i[2]), int(i[3]), i[4]))
 
-    #for key, val in graph.iteritems():
-        #print key, ':', val
+    for key, val in graph.iteritems():
+        print key, ':', val
 
     return graph
 
@@ -67,34 +66,54 @@ def find_path(graph, start, end, path=[]):
 def dfs(graph, start, destination, path=[]):
     allPaths = []
     start = (start, 0)
-    stack = [start]
+    stack = [graph[start]]
     while stack:
         v = stack.pop(0)
         if v[0] not in path:
             path = path + [v[0]]
             stack = graph[v[0]] + stack
         if destination in path:
-            return path
+            allPaths.append(path)
+    return allPaths
 
+def successor(node,graph):
+    return graph[node]
 
 def bfs(graph, start, destination, path=[]):
-    start = (start, 0)
-    stack = [start]
+    allPath = []
+    visited = [start]
+    stack = []
+    for i in successor(start,graph):
+        if i not in stack:
+            stack.append(i)
     while stack:
         v = stack.pop(0)
-        if not v[0] in path:
-            path = path + [v[0]]
-            stack = stack + graph[v[0]]
-        if destination in path:
-            return path
+        visited.append(v)
+        for i in successor(v, graph):
+            if i not in stack and i is not in visited:
+                stack.append(i)
+
+        if destination in visited:
+            allPath.append(visited)
+    return allPath
 
 
-fileName = "road-segments.txt"
+fileName = "test1.txt"
 graph = createGraph(fileName)
 sourceConnections = createDict(fileName)
-starting = "Bloomington,_Indiana"
-destination = "Indianapolis,_Indiana"
-print(dfs(graph, starting, destination))
-print(bfs(graph, starting, destination))
-#BFS(graph, starting, destination)
+starting = "A"
+destination = "E"
+#a = dfs(graph, starting, destination)
+#print(bfs(graph, starting, destination))
+a = bfs(graph, starting, destination)
+f = open('output.txt','a')
+min_len = len(a[0])
+min_path = a[0]
+for item in a:
+    if len(item) < min_len:
+        min_path = item
+        min_len = len(item)
+
+print "min_len = ", min_len, ", path = ", min_path
+f.close()
 #print(find_path(graph, starting,[]))
