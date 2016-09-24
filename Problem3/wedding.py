@@ -1,4 +1,5 @@
-N = 3
+import sys
+
 def create_graph(fileName):
     graph = {}
     f = open(fileName,"r")
@@ -9,15 +10,16 @@ def create_graph(fileName):
         for j in i[1:]:
             if j not in graph:
                 graph[j] = []
-            graph[i[0]].append(j)
-            graph[j].append(i[0])
+            if j not in graph[i[0]]:
+                graph[i[0]].append(j)
+            if i[0] not in graph[j]:
+                graph[j].append(i[0])
     f.close()
     del temp
     return graph
 
 def successor(graph,node,table):
     flag = False
-    print node
     for i in table:
         if len(table[i]) < N:
             for j in table[i]:
@@ -43,10 +45,8 @@ def solve(graph):
         Aux.remove(node)
     return table
 
-fileName = "myfriends.txt"
+fileName = sys.argv[1]
+N = int(sys.argv[2])
 graph = create_graph(fileName)
 solution = solve(graph)
-for i in graph:
-    print i
-    print graph[i]
 print solution
