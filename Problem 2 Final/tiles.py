@@ -4,7 +4,9 @@ from permInversion import findPermuatationInv
 from solve import solve
 from traverse import discoverDir
 
+
 def getFileName():
+    #return 'tile.txt'
     return sys.argv[1]
 
 def addArray(index):
@@ -20,7 +22,7 @@ def getGoalState(size):
 
 if __name__ == '__main__':
     print 'Read the file from command terminal\n'
-    heuristicOption = input('Please Enter 1 for Heuristic 1(Misplaced Tiles) and 2 for Heuristic 2(Manhattan)')
+    heuristicOption = input('Please Enter 1 for Heuristic 1(Misplaced Tiles) and 2 for Heuristic 2(Manhattan)\n')
     misplacedTiles = getBoardPlacements()
     if findPermuatationInv(misplacedTiles) == 1:
         print 'Not able to solve. Try a different Board'
