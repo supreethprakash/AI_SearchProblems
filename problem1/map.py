@@ -1,22 +1,3 @@
-
-# This dictionary contains all the cities and it's connections
-def createDict(fileName):
-    dict = {}
-    f = open(fileName,'r')
-    temp = [line.split(' ',) for line in [line.rstrip('\n') for line in f ]]
-    for i in temp:
-        str = ''
-        if i[0] not in dict:
-            dict[i[0]] = []
-        for j in i[1:]:
-            str += ', ' + j
-        dict[i[0]].append(str[2:])
-
-    return dict
-
-    #for key, val in dict.iteritems():
-        #print key, ':', val
-
 # This is the graph of all cities.
 def createGraph(fileName):
     graph = {}
@@ -42,78 +23,58 @@ def createGraph(fileName):
             i[3] = '0'
         graph[i[1]].append((i[0], int(i[2]), int(i[3]), i[4]))
 
-    for key, val in graph.iteritems():
-        print key, ':', val
+    #for key, val in graph.iteritems():
+        #print key, ':', val
 
     return graph
 
-
-#sample path from Src A - Dst B
-def find_path(graph, start, end, path=[]):
-    path = path + [start]
-    if start == end:
-        return path
-    if not graph.has_key(start):
-        return None
-    for node in graph[start]:
-        if node[0] not in path:
-            newpath = find_path(graph, node[0], end, path)
-            if newpath: return newpath
-    return None
+def isgoal(start,destination,i):
+    return i[0] == start and i[-1] == destination
 
 
-#Finds the first found route between src and dest, need to tweak it a bit
-def dfs(graph, start, destination, path=[]):
-    allPaths = []
-    start = (start, 0)
-    stack = [graph[start]]
-    while stack:
-        v = stack.pop(0)
-        if v[0] not in path:
-            path = path + [v[0]]
-            stack = graph[v[0]] + stack
-        if destination in path:
-            allPaths.append(path)
-    return allPaths
-
-def successor(node,graph):
-    return graph[node]
-
-def bfs(graph, start, destination, path=[]):
-    allPath = []
+def solve(graph, start, destination,choice, depth):
+    path = []
     visited = [start]
-    stack = []
-    for i in successor(start,graph):
-        if i not in stack:
-            stack.append(i)
+    stack = [[start]]
     while stack:
-        v = stack.pop(0)
-        visited.append(v)
+        if choice == 0:
+            v = stack.pop(0)
+        else:
+            v = stack.pop()
+            if choice == 2:
+                if len(v) == depth:
+                    continue
         for i in successor(v, graph):
-            if i not in stack and i is not in visited:
+            if isgoal(start, destination, i):
+                return i
+            else:
+                visited.append(i[-1])
                 stack.append(i)
-
-        if destination in visited:
-            allPath.append(visited)
-    return allPath
+        #print stack
+    return []
 
 
-fileName = "test1.txt"
-graph = createGraph(fileName)
-sourceConnections = createDict(fileName)
-starting = "A"
-destination = "E"
-#a = dfs(graph, starting, destination)
-#print(bfs(graph, starting, destination))
-a = bfs(graph, starting, destination)
-f = open('output.txt','a')
-min_len = len(a[0])
-min_path = a[0]
-for item in a:
-    if len(item) < min_len:
-        min_path = item
-        min_len = len(item)
+def successor(node, graph):
+    temp = graph[node[-1]]
+    s = []
+    for i in temp:
+        k = list(node)
+        k.append(i[0])
+        s.append(k)
 
-print "min_len = ", min_len, ", path = ", min_path
-f.close()
-#print(find_path(graph, starting,[]))
+    return s
+
+if __name__ == '__main__':
+    fileName = "road-segments.txt"
+    graph = createGraph(fileName)
+    starting = "Chicago,_Illinois"
+    destination = "Bloomington,_Indiana"
+    d = 10
+    ch = 2
+    a = solve(graph, starting, destination, ch, d)
+    if ch == 2:
+        while a == []:
+            #print a
+            d+=1
+            a = solve(graph, starting, destination, ch, d)
+    print a
