@@ -1,3 +1,4 @@
+from copy import deepcopy
 # This is the graph of all cities.
 def createGraph(fileName):
     graph = {}
@@ -34,6 +35,40 @@ def isgoal(start, destination, i):
     return i[0] == start and i[-1] == destination
 
 
+def solve2(graph, start, destination,choice,depth):
+    visited = {start: [[start], 0]}
+    stack = [[[start], 0]]
+    while stack:
+        if choice == 0:
+            v = stack.pop(0)
+        else:
+            v = stack.pop()
+            if choice == 2:
+                if len(v) == depth:
+                    continue
+        for i in successor2(v, graph):
+            if isgoal(start, destination, i):
+                return i
+            else:
+                visited.append(i[-1])
+                stack.append(i)
+    return []
+
+def successor2(node, graph):
+    temp = graph[node[0][-1]]
+    s = []
+    for i in temp:
+        print i
+        #if i[0] not in visited:
+        k = deepcopy(node)
+        k[0].append(i[0])
+        k[1] += node[1]+i[1]
+        s.append(k)
+    print s
+    return s
+
+
+
 def solve(graph, start, destination, choice, depth):
     visited = [start]
     stack = [[start]]
@@ -66,13 +101,14 @@ def successor(node, graph, visited):
     return s
 
 if __name__ == '__main__':
-    fileName = "road-segments.txt"
+    fileName = "test1.txt"
     graph = createGraph(fileName)
-    starting = "Chicago,_Illinois"
-    destination = "Cupertino,_California"
+    starting = "A"
+    destination = "E"
+    #print solve2(graph, starting, destination)
     d = 10
     ch = 0
-    a = solve(graph, starting, destination, ch, d)
+    a = solve2(graph, starting, destination, ch, d)
     if ch == 2:
         while len(a) == 0:
             d += 1
