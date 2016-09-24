@@ -45,8 +45,7 @@ def solve(board, goal, option):
 
     while len(openset) != 0:
         curState = getMinimumElement(openset, fS)
-        if curState == goalState:
-            return previousStates, curState, noOfStates
+        if curState == goalState: return previousStates, curState, noOfStates
         currentMatrix = createMatrix(curState, 4)
         openset.remove(curState)
         closedSet.append(curState)
