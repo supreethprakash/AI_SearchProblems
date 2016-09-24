@@ -11,29 +11,30 @@ def createGraph(fileName):
         for j in i[1:5]:
             if not j:
                 j = '25'
+                i[3] = '25'
             if j.isdigit():
                 tup = tup + (int(j),)
             else:
                 tup = tup + (j,)
+        if int(i[3]) == 0:
+            i[3] = 25
+        tup = tup + ((int(i[2])/(int(i[3])* 1.0)),)
         graph[i[0]].append(tup)
 
         if i[1] not in graph:
             graph[i[1]] = []
         if i[3] == '':
-            i[3] = '0'
-        graph[i[1]].append((i[0], int(i[2]), int(i[3]), i[4]))
-
-    #for key, val in graph.iteritems():
-        #print key, ':', val
+            i[3] = '10'
+        graph[i[1]].append((i[0], int(i[2]), int(i[3]), i[4], (int(i[2]) / (int(i[3])* 1.0))))
 
     return graph
 
-def isgoal(start,destination,i):
+
+def isgoal(start, destination, i):
     return i[0] == start and i[-1] == destination
 
 
-def solve(graph, start, destination,choice, depth):
-    path = []
+def solve(graph, start, destination, choice, depth):
     visited = [start]
     stack = [[start]]
     while stack:
@@ -44,23 +45,23 @@ def solve(graph, start, destination,choice, depth):
             if choice == 2:
                 if len(v) == depth:
                     continue
-        for i in successor(v, graph):
+        for i in successor(v, graph, visited):
             if isgoal(start, destination, i):
                 return i
             else:
                 visited.append(i[-1])
                 stack.append(i)
-        #print stack
     return []
 
 
-def successor(node, graph):
+def successor(node, graph, visited):
     temp = graph[node[-1]]
     s = []
     for i in temp:
-        k = list(node)
-        k.append(i[0])
-        s.append(k)
+        if i[0] not in visited:
+            k = list(node)
+            k.append(i[0])
+            s.append(k)
 
     return s
 
@@ -68,13 +69,12 @@ if __name__ == '__main__':
     fileName = "road-segments.txt"
     graph = createGraph(fileName)
     starting = "Chicago,_Illinois"
-    destination = "Bloomington,_Indiana"
+    destination = "Cupertino,_California"
     d = 10
-    ch = 2
+    ch = 0
     a = solve(graph, starting, destination, ch, d)
     if ch == 2:
-        while a == []:
-            #print a
-            d+=1
+        while len(a) == 0:
+            d += 1
             a = solve(graph, starting, destination, ch, d)
     print a
