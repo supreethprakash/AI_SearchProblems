@@ -18,3 +18,31 @@ def misplacedTiles(board, goal):
                 totalSum += 1
 
     return totalSum
+
+
+def manhattanMod(board):
+    totalSum = 0
+    circularSum = 0
+
+    for r in range(4):
+        for c in range(4):
+            n = board[r][c] - 1
+            if n != -1:
+                r_solved = abs(r - n / 4)
+                c_solved = abs(c - n % 4)
+                totalSum += r_solved + c_solved
+                if r_solved + c_solved == 6:
+                    circularSum += (r_solved + c_solved) / 3
+                else:
+                    circularSum += ((r_solved + c_solved) % 3) + 1
+
+            else:
+                r_solved = abs(r - 15 / 4)
+                c_solved = abs(c - 15 % 4)
+                totalSum += r_solved + c_solved
+                if r_solved + c_solved == 6:
+                    circularSum += (r_solved + c_solved) / 3
+                else:
+                    circularSum += ((r_solved + c_solved) % 3) + 1
+
+    return min(totalSum, circularSum)
