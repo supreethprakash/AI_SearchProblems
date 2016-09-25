@@ -19,15 +19,26 @@ def createGraph(fileName):
                 tup = tup + (j,)
         if int(i[3]) == 0:
             i[3] = 25
-        tup = tup + ((int(i[2])/(int(i[3])* 1.0)),)
+        tup = tup + ((int(i[2])/(int(i[3])* 1.0)) * 60.0,)
+        if int(i[3]) >= 55:
+            tup = tup + (0,)
+        else:
+            tup = tup + (1,)
         graph[i[0]].append(tup)
 
         if i[1] not in graph:
             graph[i[1]] = []
         if i[3] == '':
             i[3] = '10'
-        graph[i[1]].append((i[0], int(i[2]), int(i[3]), i[4], (int(i[2]) / (int(i[3])* 1.0))))
 
+        if int(i[3]) >= 55:
+            a = 0
+        else:
+            a = 1
+        graph[i[1]].append((i[0], int(i[2]), int(i[3]), i[4], (int(i[2]) / (int(i[3])* 1.0)) * 60.0, a))
+
+    for key, val in graph.iteritems():
+        print key , ':', val
     return graph
 
 
@@ -35,7 +46,7 @@ def isgoal(start, destination, i):
     return i[0] == start and i[-1] == destination
 
 
-def solve2(graph, start, destination,choice,depth):
+def solve2(graph, start, destination, choice, depth):
     visited = {start:0}
     stack = [[[start], 0]]
     result = [[],99999]
@@ -106,13 +117,13 @@ if __name__ == '__main__':
     fileName = "road-segments.txt"
     graph = createGraph(fileName)
     #print graph
-    #starting = "A"
-    #destination = "E"
+    starting = "A"
+    destination = "E"
     starting = "Indianapolis,_Indiana"
     destination = "Bloomington,_Indiana"
     d = 10
     ch = 0
-    a = solve(graph, starting, destination, ch, d)
+    a = solve2(graph, starting, destination, ch, d)
     if ch == 2:
         while len(a) == 0:
             d += 1
