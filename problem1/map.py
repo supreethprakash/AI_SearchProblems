@@ -38,7 +38,6 @@ def isgoal(start, destination, i):
 def solve2(graph, start, destination,choice,depth):
     visited = {start:0}
     stack = [[[start], 0]]
-    max = 99999
     result = [[],99999]
     while stack:
         #print "stack = ", stack
@@ -50,10 +49,9 @@ def solve2(graph, start, destination,choice,depth):
                 if len(v) == depth:
                     continue
         for i in successor2(v, graph,visited):
-            if isgoal(start, destination, i[0]):
-                if result[1] > i[1]:
+            if result[1] > i[1]:
+                if isgoal(start, destination, i[0]):
                     result = i
-            elif max > i[1] and result[1] > i[1]:
                 stack.append(i)
 
     return result
@@ -64,12 +62,8 @@ def successor2(node, graph,visited):
     for i in temp:
         if i[0] not in visited or node[1]+i[1] < visited[i[0]]:
             k = deepcopy(node)
-            #print k
             k[0].append(i[0])
-            #print k
-            #print "k1= ",k[1],"node1=",node[1],"i1=",i[1]
-            k[1] += i[1]
-            #print k[1]
+            k[1] += i[4]
             s.append(k)
     #print s
     return s
@@ -108,14 +102,17 @@ def successor(node, graph, visited):
     return s
 
 if __name__ == '__main__':
+    #fileName = "test1.txt"
     fileName = "road-segments.txt"
     graph = createGraph(fileName)
+    #print graph
+    #starting = "A"
+    #destination = "E"
     starting = "Indianapolis,_Indiana"
     destination = "Bloomington,_Indiana"
-    #print solve2(graph, starting, destination)
     d = 10
-    ch = 1
-    a = solve2(graph, starting, destination, ch, d)
+    ch = 0
+    a = solve(graph, starting, destination, ch, d)
     if ch == 2:
         while len(a) == 0:
             d += 1
