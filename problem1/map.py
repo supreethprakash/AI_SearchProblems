@@ -37,15 +37,15 @@ def createGraph(fileName):
             a = 1
         graph[i[1]].append((i[0], int(i[2]), int(i[3]), i[4], (int(i[2]) / (int(i[3])* 1.0)) * 60.0, a))
 
-    for key, val in graph.iteritems():
-        print key , ':', val
+    #for key, val in graph.iteritems():
+        #print key , ':', val
     return graph
 
 
 def isgoal(start, destination, i):
     return i[0] == start and i[-1] == destination
 
-
+#for time and distance routing option
 def solve2(graph, start, destination, choice, depth):
     visited = {start:0}
     stack = [[[start], 0]]
@@ -74,13 +74,13 @@ def successor2(node, graph,visited):
         if i[0] not in visited or node[1]+i[1] < visited[i[0]]:
             k = deepcopy(node)
             k[0].append(i[0])
-            k[1] += i[4]
+            k[1] += i[1]
             s.append(k)
     #print s
     return s
 
 
-
+#for segment routing option
 def solve(graph, start, destination, choice, depth):
     visited = [start]
     stack = [[start]]
@@ -117,8 +117,8 @@ if __name__ == '__main__':
     fileName = "road-segments.txt"
     graph = createGraph(fileName)
     #print graph
-    starting = "A"
-    destination = "E"
+    #starting = "A"
+    #destination = "E"
     starting = "Indianapolis,_Indiana"
     destination = "Bloomington,_Indiana"
     d = 10
