@@ -41,7 +41,7 @@ def solve(board, goal, option):
     if option == 1:
         fS = {startState: gS[startState] + misplacedTiles(board, goal)}
     else:
-        fS = {startState: gS[startState] + manhattan(board)}
+        fS = {startState: manhattan(board)}
 
     while len(openset) != 0:
         curState = getMinimumElement(openset, fS)
@@ -56,7 +56,8 @@ def solve(board, goal, option):
             if option == 1:
                 tentativeFs = tentativeGs + misplacedTiles(eachNeighbor, goal)
             else:
-                tentativeFs = tentativeGs + manhattan(eachNeighbor)
+                tentativeFs = manhattan(eachNeighbor)
+
             neighborString = toString(eachNeighbor)
 
             if neighborString in closedSet and neighborString in fS and tentativeFs >= fS[neighborString]:
