@@ -37,16 +37,15 @@ def createGraph(fileName):
             a = 1
         graph[i[1]].append((i[0], int(i[2]), int(i[3]), i[4], (int(i[2]) / (int(i[3])* 1.0)) * 60.0, a))
 
-    for key, val in graph.iteritems():
-        print key , ':', val
+    #for key, val in graph.iteritems():
+        #print key , ':', val
     return graph
-
 
 def isgoal(start, destination, i):
     return i[0] == start and i[-1] == destination
 
-
-def solve2(graph, start, destination, choice, depth):
+# A*
+def solve3(graph, start, destination, choice, depth):
     visited = {start:0}
     stack = [[[start], 0]]
     result = [[],99999]
@@ -67,20 +66,48 @@ def solve2(graph, start, destination, choice, depth):
 
     return result
 
+
+#for time and distance routing option
+def solve2(graph, start, destination, choice, depth):
+    visited = {start:0}
+    stack = [[[start], 0]]
+    result = [[],99999]
+    while stack:
+        #print "stack = ", stack
+        if choice == 0:
+            v = stack.pop(0)
+        else:
+            v = stack.pop()
+            if choice == 2:
+                if len(v) == depth:
+                    continue
+        for i in successor2(v, graph,visited):
+            if result[1] > i[1]:
+                if isgoal(start, destination, i[0]):
+                    result = i
+                else:
+                    stack.append(i)
+    print visited
+    return result
+
 def successor2(node, graph,visited):
     temp = graph[node[0][-1]]
     s = []
     for i in temp:
-        if i[0] not in visited or node[1]+i[1] < visited[i[0]]:
-            k = deepcopy(node)
-            k[0].append(i[0])
-            k[1] += i[4]
-            s.append(k)
+        if i[0] not in visited:
+            visited[i[0]] = 99999
+        elif node[1]+i[1] >= visited[i[0]]:
+            continue
+        k = deepcopy(node)
+        k[0].append(i[0])
+        k[1] += i[1]
+        visited[i[0]] = k[1]
+        s.append(k)
     #print s
     return s
 
 
-
+#for segment routing option
 def solve(graph, start, destination, choice, depth):
     visited = [start]
     stack = [[start]]
@@ -117,8 +144,8 @@ if __name__ == '__main__':
     fileName = "road-segments.txt"
     graph = createGraph(fileName)
     #print graph
-    starting = "A"
-    destination = "E"
+    #starting = "A"
+    #destination = "E"
     starting = "Indianapolis,_Indiana"
     destination = "Bloomington,_Indiana"
     d = 10
@@ -127,5 +154,5 @@ if __name__ == '__main__':
     if ch == 2:
         while len(a) == 0:
             d += 1
-            a = solve(graph, starting, destination, ch, d)
+            a = solve2(graph, starting, destination, ch, d)
     print a
