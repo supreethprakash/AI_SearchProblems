@@ -46,3 +46,19 @@ def manhattanMod(board):
                     circularSum += ((r_solved + c_solved) % 3) + 1
 
     return min(totalSum, circularSum)
+
+
+def missedRowsCols(board, goal):
+    rowBoard = [sum(i) for i in board]
+    rowGoal = [sum(i) for i in goal]
+    colBoard = [sum(i) for i in zip(*board)]
+    colGoal = [sum(i) for i in zip(*goal)]
+
+    diff = 0
+    for i in range(len(rowBoard)):
+        diff += abs(rowBoard[i] - rowGoal[i])
+
+    for i in range(len(colBoard)):
+        diff += abs(colBoard[i] - colGoal[i])
+
+    return diff
