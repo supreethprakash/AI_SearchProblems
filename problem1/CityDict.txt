@@ -1,0 +1,19 @@
+def createcityDict(fileName1):
+    dict = {}
+    f = open(fileName1,'r')
+    temp = [line.split(' ',) for line in [line.rstrip('\n') for line in f ]]
+    for i in temp:
+        str = ''
+        if i[0] not in dict:
+            dict[i[0]] = []
+        for j in i[1:]:
+            str += ', ' + j
+        dict[i[0]].append(str[2:])
+    f.close()
+    return dict
+
+from math import sqrt
+def heuristic (graph,node,end):
+    return sqrt((graph[end[0]] - graph[node[0]])**2 + (graph[end[1]] - graph[node[1]])**2)
+
+graph=createcityDict(fileName1)
