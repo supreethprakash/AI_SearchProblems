@@ -197,7 +197,7 @@ if __name__ == '__main__':
         if routing_option == 1 or routing_option == 2:
             a = solve2(graph, starting, destination, routing_algo, routing_option, d)
             if routing_algo == 2:
-                while len(a) == 0:
+                while len(a[0]) == 0:
                     d += 1
                     a = solve2(graph, starting, destination, routing_algo,routing_option, d)
             print a[1], " ", a[0]
