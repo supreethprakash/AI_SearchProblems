@@ -6,8 +6,7 @@ from traverse import discoverDir
 
 
 def getFileName():
-    return 'tile.txt'
-    #return sys.argv[1]
+    return sys.argv[1]
 
 def addArray(index):
     goalState = []

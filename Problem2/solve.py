@@ -7,7 +7,7 @@ def toString(obj):
 
 
 def getMinimumElement(openset, fScore):
-    minScore = 2 ** 30
+    minScore = 999999   # some high number just to compare.
     minElem = None
     for elem in openset:
         if elem in fScore.keys() and fScore[elem] < minScore:
@@ -60,10 +60,13 @@ def solve(board, goal, option):
 
             neighborString = toString(eachNeighbor)
 
-            if neighborString in closedSet and neighborString in fS and tentativeFs >= fS[neighborString]:
-                continue
+            if neighborString in closedSet:
+                if neighborString in fS:
+                    if tentativeFs >= fS[neighborString]:
+                        continue
 
-            if neighborString not in openset or (neighborString in fS and tentativeFs < fS[neighborString]):
+            if neighborString not in openset or \
+                    (neighborString in fS and tentativeFs < fS[neighborString]):
                 noOfStates += 1
                 previousStates[neighborString] = curState
                 gS[neighborString] = tentativeGs
