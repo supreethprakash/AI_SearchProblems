@@ -124,7 +124,7 @@ def solve2(graph, start, destination, choice,ch, depth):
         else:
             v = stack.pop()
             if choice == 2:
-                if len(v) == depth:
+                if len(v[0]) == depth:
                     continue
         for i in successor2(v, graph,visited,ch**2):
             if result[1] > i[1]:
