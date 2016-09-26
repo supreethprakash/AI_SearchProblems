@@ -192,6 +192,7 @@ if __name__ == '__main__':
     d = 10
     if routing_algo == 3:
         a = solve3(graph,starting,destination,gps,routing_option)
+        print a[1], " ", a[0]
     else:
         if routing_option == 1 or routing_option == 2:
             a = solve2(graph, starting, destination, routing_algo, routing_option, d)
@@ -199,13 +200,17 @@ if __name__ == '__main__':
                 while len(a) == 0:
                     d += 1
                     a = solve2(graph, starting, destination, routing_algo,routing_option, d)
+            print a[1], " ", a[0]
         else:
             a = solve(graph, starting, destination, routing_algo, d)
             if routing_algo == 2:
                 while len(a) == 0:
                     d += 1
                     a = solve(graph, starting, destination, routing_algo, d)
-    print a
+            print a
+
+    '''
+    #following code finds minimum distance from Bloomington,_Indiana to the farthest city using A*
     farthest = 0.0
     city1 = "Bloomington,_Indiana"
     city2 = ""
@@ -215,3 +220,4 @@ if __name__ == '__main__':
             farthest = d
             city2 = i
     print solve3(graph, city1, city2, gps, 1)
+    '''

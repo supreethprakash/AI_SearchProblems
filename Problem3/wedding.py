@@ -38,7 +38,7 @@ def solve(graph):
     Aux = graph.keys()  # list of people not seated yet
     fringe = [Aux[0]]
     while len(fringe) > 0:
-        node = fringe.pop()
+        node = fringe.pop(0)
         for s in successor(graph,node,table):
             if s not in fringe and s in Aux:
                 fringe.append(s)
