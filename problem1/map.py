@@ -57,10 +57,8 @@ def createGraph(fileName):
 def isgoal(start, destination, i):
     return i[0] == start and i[-1] == destination
 
-#For min distance and min segment
+#For min distance, segment, time
 def heuristic(graph,node,end,ch):
-    #print "node = ",node, "end = ",end
-    #print graph[node]
     if node not in graph or end not in graph:
         return 0
     if ch == 2:
@@ -183,17 +181,12 @@ def successor(node, graph, visited):
     return s
 
 if __name__ == '__main__':
-    #fileName = "test1.txt"
-    #fileName2 = "test1_gps.txt"
     fileName2 = "city-gps.txt"
     fileName = "road-segments.txt"
     graph = createGraph(fileName)
     gps = cityGPS(fileName2)
     routing_option = int(sys.argv[3])
     routing_algo = int(sys.argv[4])
-    #print graph
-    #starting = "A"
-    #destination = "E"
     starting = sys.argv[1]
     destination = sys.argv[2]
     d = 10
@@ -213,3 +206,12 @@ if __name__ == '__main__':
                     d += 1
                     a = solve(graph, starting, destination, routing_algo, d)
     print a
+    farthest = 0.0
+    city1 = "Bloomington,_Indiana"
+    city2 = ""
+    for i in gps:
+        d = heuristic(gps,city1,i,1)
+        if d > farthest:
+            farthest = d
+            city2 = i
+    print solve3(graph, city1, city2, gps, 1)
